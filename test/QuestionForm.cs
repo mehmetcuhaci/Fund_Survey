@@ -11,7 +11,7 @@ namespace test
         public List<Choice> Choices { get; set; }
         public List<RadioButton> ChoiceRadioButtons { get; private set; }
 
-        public List<int> SelectedChoiceIds { get; private set; }
+       
 
         public Choice SelectedChoice { get; private set; }
 
@@ -26,7 +26,7 @@ namespace test
             InitializeComponent();
             ChoiceRadioButtons = new List<RadioButton>();
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            SelectedChoiceIds = new List<int>();
+            
         }
 
         public string QuestionText
@@ -34,6 +34,7 @@ namespace test
             get { return questionLabel.Text; }
             set { questionLabel.Text = value; }
         }
+
 
         public List<Choice> SelectedChoices
         {
