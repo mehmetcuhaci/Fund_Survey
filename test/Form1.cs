@@ -56,8 +56,8 @@ namespace test
                                     {
                                         userResponses.Add(new Response
                                         {
-                                            QuestionID = question.id,
-                                            ChoiceID = choiceId
+                                            questionId = question.id,
+                                            choiceId = choiceId
                                         });
                                     }
                                 }
@@ -127,8 +127,8 @@ namespace test
             StringBuilder formattedResponses = new StringBuilder();
             foreach (var response in responses)
             {
-                formattedResponses.AppendLine($"Question ID: {response.QuestionID}");
-                formattedResponses.AppendLine($"Choice ID: {response.ChoiceID}");
+                formattedResponses.AppendLine($"Question ID: {response.questionId}");
+                formattedResponses.AppendLine($"Choice ID: {response.choiceId}");
                 formattedResponses.AppendLine();
             }
             return formattedResponses.ToString();
@@ -138,8 +138,8 @@ namespace test
 
         public class Response
         {
-            public string QuestionID { get; set; }
-            public int ChoiceID { get; set; }
+            public string questionId { get; set; }
+            public int choiceId { get; set; }
         }
 
         public class Choice
