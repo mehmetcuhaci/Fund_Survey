@@ -13,7 +13,7 @@ namespace test
 
     public partial class Form1 : Form
     {
-        private List<Response> userResponses = new List<Response>();
+        private List<Response> userResponses = new List<Response>(); // kullanıcı girişlerini liste halinde topla
         private static object https;
         public Form1()
         {
@@ -22,41 +22,41 @@ namespace test
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey";
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";
+            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey"; // anketi getirmek için kullanılan link
+            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002"; // kullanabilmek için api key
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())  // web servisinden veri alabilmek için metod
             {
-                client.DefaultRequestHeaders.Add("x-api-key", apiKey);
+                client.DefaultRequestHeaders.Add("x-api-key", apiKey);  // api key girişi
 
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(apiUrl);
+                    HttpResponseMessage response = await client.GetAsync(apiUrl); // apiUrlye giriş denemesi
 
-                    if (response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode) // eğer giriş başarılıysa
                     {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        Root root = JsonConvert.DeserializeObject<Root>(responseBody);
+                        string responseBody = await response.Content.ReadAsStringAsync();  //gelen veri
+                        Root root = JsonConvert.DeserializeObject<Root>(responseBody); // gelen veriyi jsona çevir
 
-                        foreach (var question in root.data.questions)
+                        foreach (var question in root.data.questions)  //gelen data içinde soruları gez
                         {
-                            using (QuestionForm questionForm = new QuestionForm())
+                            using (QuestionForm questionForm = new QuestionForm())  // soru formuna gir
                             {
-                                questionForm.QuestionText = $"{question.content}";
+                                questionForm.QuestionText = $"{question.content}";  // soru formunda soru içeriğini al
 
-                                questionForm.LoadChoices(question.choices);
+                                questionForm.LoadChoices(question.choices); // seçenekleri al
 
-                                DialogResult result = questionForm.ShowDialog();
+                                DialogResult result = questionForm.ShowDialog(); // soru formunu getir
 
-                                if (result == DialogResult.OK)
+                                if (result == DialogResult.OK) // eğer form tamamlanırsa
                                 {
-                                    List<int> selectedChoiceIds = questionForm.SelectedChoiceIds;
+                                    List<int> selectedChoiceIds = questionForm.SelectedChoiceIds;  // seçilen seçenekleri topla
 
-                                    foreach (int choiceId in selectedChoiceIds)
+                                    foreach (int choiceId in selectedChoiceIds) //seçilen seçenekleri idlerine ayır
                                     {
                                         userResponses.Add(new Response
                                         {
-                                            questionId = question.id,
+                                            questionId = question.id, // responsa soru ve seçenek idlerini kaydet
                                             choiceId = choiceId
                                         });
                                     }
@@ -64,17 +64,17 @@ namespace test
                             }
                         }
 
-                        string formattedResponses = FormatResponsesForMessageBox(userResponses);
+                        string formattedResponses = FormatResponsesForMessageBox(userResponses); //test için soruları ve seçenekleri ekrana bastırdım
                         MessageBox.Show("Formatted Responses:\n\n" + formattedResponses);
 
                         await PostResponsesToWebService(userResponses);
                     }
                     else
                     {
-                        MessageBox.Show($"Error: {response.StatusCode}");
+                        MessageBox.Show($"Error: {response.StatusCode}");   
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex)                     /* Eğer bir sorun çıkarsa burada koduyla birlikte uyarısını vericek NotAllowed */
                 {
                     MessageBox.Show($"Error: {ex.Message}");
                 }
@@ -82,7 +82,7 @@ namespace test
 
         }
 
-        private async Task PostResponsesToWebService(List<Response> userResponses)
+        private async Task PostResponsesToWebService(List<Response> userResponses)  // toplanan anket verisini göndermek için
         {
 
             string apiUrl = "https://dev.service.yancep.net/Survey/GetSurveyResult";
@@ -94,20 +94,20 @@ namespace test
 
                 try
                 {
-                    var postData = new
+                    var postData = new  //postlanıcak json için 
                     {
                         results = userResponses,
                         surveyCode = "Suggest"
                     };
 
-                    string postDataJson = JsonConvert.SerializeObject(postData);
+                    string postDataJson = JsonConvert.SerializeObject(postData);   // postDatayı jsona çevir
 
-                    HttpResponseMessage response = await client.PostAsync(apiUrl, new StringContent(postDataJson, Encoding.UTF8, "application/json"));
+                    HttpResponseMessage response = await client.PostAsync(apiUrl, new StringContent(postDataJson, Encoding.UTF8, "application/json")); //application/jsona çevirdi
 
                     if (response.IsSuccessStatusCode)
                     {
-                        MessageBox.Show(postDataJson);
-                        MessageBox.Show("Responses submitted successfully.");
+                        MessageBox.Show(postDataJson); //test için göndermeden önce ekrana yazdırdı
+                        MessageBox.Show("Anket gönderildi."); 
                     }
                     else
                     {
@@ -127,7 +127,7 @@ namespace test
             StringBuilder formattedResponses = new StringBuilder();
             foreach (var response in responses)
             {
-                formattedResponses.AppendLine($"Question ID: {response.questionId}");
+                formattedResponses.AppendLine($"Question ID: {response.questionId}");  //test için ıdleri yazdırma
                 formattedResponses.AppendLine($"Choice ID: {response.choiceId}");
                 formattedResponses.AppendLine();
             }
@@ -136,7 +136,7 @@ namespace test
 
 
 
-        public class Response
+        public class Response    /* Çekilen dataları sınıflara verildi gerekli olanlar sınıflardan liste halinde çekiliyor */
         {
             public string questionId { get; set; }
             public int choiceId { get; set; }

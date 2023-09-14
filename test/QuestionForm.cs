@@ -11,8 +11,8 @@ namespace test
 
 
         public List<Choice> Choices { get; set; }
-        public List<RadioButton> ChoiceRadioButtons { get; private set; }
-        public List<int> SelectedChoiceIdList { get; private set; } // Değişen isim
+        public List<RadioButton> ChoiceRadioButtons { get; private set; } 
+        public List<int> SelectedChoiceIdList { get; private set; } // seçilen seçeneklerin listesi
 
         public Choice SelectedChoice { get; private set; }
         public Question Question { get; set; }
@@ -24,18 +24,18 @@ namespace test
         {
             InitializeComponent();
             ChoiceRadioButtons = new List<RadioButton>();
-            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // radiobuttonları dikey olarak sıralamak için
             SelectedChoiceIdList = new List<int>();
         }
 
         public string QuestionText
         {
-            get { return questionLabel.Text; }
+            get { return questionLabel.Text; }  //soruyu bu labela yazdırıyor
             set { questionLabel.Text = value; }
         }
 
 
-        public List<int> SelectedChoiceIds // Değişen isim
+        public List<int> SelectedChoiceIds 
         {
             get
             {
@@ -43,44 +43,44 @@ namespace test
             }
         }
 
-        public void LoadChoices(List<Choice> choices)
+        public void LoadChoices(List<Choice> choices) //seçenekler sınıfından liste halinde seçenekleri yüklemek için
         {
-            // Clear existing controls
-            flowLayoutPanel1.Controls.Clear();
+            //önceki soruyu temizle
+            flowLayoutPanel1.Controls.Clear(); 
 
-            foreach (var choice in choices)
+            foreach (var choice in choices)  // seçenekler arasından seçenek getir
             {
-                RadioButton radioButton = new RadioButton();
+                RadioButton radioButton = new RadioButton(); //yeni radiobutton oluştr
 
-                radioButton.Text = choice.content;
-                radioButton.Tag = choice.id;
+                radioButton.Text = choice.content; //radio button içeriği seçenek içeriği olsun
+                radioButton.Tag = choice.id; //tag'ı ID olsun
                 radioButton.AutoSize = true;
 
-                radioButton.CheckedChanged += (sender, e) =>
+                radioButton.CheckedChanged += (sender, e) => // seçenek seçildiğinde olayı tetiklemek için
                 {
-                    if (radioButton.Checked)
+                    if (radioButton.Checked) // eğer seçildiyse
                     {
                         int choiceId = (int)radioButton.Tag;
-                        if (!SelectedChoiceIdList.Contains(choiceId)) // Değişen isim
+                        if (!SelectedChoiceIdList.Contains(choiceId)) // eğer bu Id'de bir ıd yoksa
                         {
-                            SelectedChoiceIdList.Add(choiceId); // Değişen isim
+                            SelectedChoiceIdList.Add(choiceId); // ekle
                         }
                     }
                 };
 
-                // Add the RadioButton and choice content as a label
-                Label choiceLabel = new Label
+                
+                Label choiceLabel = new Label 
                 {
-                    Text = choice.content,
+                    Text = choice.content,  //soru içeriğini radiobutona ekle
                     AutoSize = true
                 };
 
-                flowLayoutPanel1.Controls.Add(radioButton);
+                flowLayoutPanel1.Controls.Add(radioButton); // panele radiobutton ekle
             }
         }
 
 
-        private void NextQuestionButton_Click(object sender, EventArgs e)
+        private void NextQuestionButton_Click(object sender, EventArgs e) //yeni soruya geç
         {
             DialogResult = DialogResult.OK;
             Close();
