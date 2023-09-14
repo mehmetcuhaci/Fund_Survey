@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using Newtonsoft.Json;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace test
 {
@@ -27,22 +22,21 @@ namespace test
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey"; // web servis bağlantısı için string oluştur
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";  //api key'i stringe tanımla
+            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey";
+            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";
 
-            using (HttpClient client = new HttpClient())   // web servis bağlantısı için httpclient kütüphanesi kullan
+            using (HttpClient client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("x-api-key", apiKey); //web servisi kullanabilmek için api key gir
+                client.DefaultRequestHeaders.Add("x-api-key", apiKey);
 
                 try
                 {
                     HttpResponseMessage response = await client.GetAsync(apiUrl);
 
-                    if (response.IsSuccessStatusCode)  // eğer giriş başarılı ise
+                    if (response.IsSuccessStatusCode)
                     {
-                        string responseBody = await response.Content.ReadAsStringAsync(); //response sınıfından verileri al
-
-                        Root root = JsonConvert.DeserializeObject<Root>(responseBody);  // aldığın verileri json formatına dönüştür
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        Root root = JsonConvert.DeserializeObject<Root>(responseBody);
 
                         foreach (var question in root.data.questions)
                         {
@@ -50,34 +44,29 @@ namespace test
                             {
                                 questionForm.QuestionText = $"{question.content}";
 
-                                questionForm.Question = question;
                                 questionForm.LoadChoices(question.choices);
 
                                 DialogResult result = questionForm.ShowDialog();
 
                                 if (result == DialogResult.OK)
                                 {
-                                    List<Choice> selectedChoices = questionForm.SelectedChoices;
+                                    List<int> selectedChoiceIds = questionForm.SelectedChoiceIds;
 
-                                    // Ensure that selected choice IDs are captured
-                                    List<int> selectedChoiceIds = selectedChoices.Select(choice => choice.ChoiceId).ToList(); // Use ChoiceId
-
-                                    // Create a new Response object and set the selected choice IDs
-                                    userResponses.Add(new Response
+                                    foreach (int choiceId in selectedChoiceIds)
                                     {
-                                        QuestionID = question.id,
-                                        Question = question.content,
-                                        SelectedChoiceIds = selectedChoiceIds
-                                    });
+                                        userResponses.Add(new Response
+                                        {
+                                            QuestionID = question.id,
+                                            ChoiceID = choiceId
+                                        });
+                                    }
                                 }
                             }
                         }
 
-
                         string formattedResponses = FormatResponsesForMessageBox(userResponses);
                         MessageBox.Show("Formatted Responses:\n\n" + formattedResponses);
 
-                        
                         await PostResponsesToWebService(userResponses);
                     }
                     else
@@ -105,7 +94,6 @@ namespace test
 
                 try
                 {
-                    // Create a JSON object containing the responses
                     var postData = new
                     {
                         results = userResponses,
@@ -114,11 +102,11 @@ namespace test
 
                     string postDataJson = JsonConvert.SerializeObject(postData);
 
-                    // Send a POST request to submit the responses
-                    HttpResponseMessage response = await client.PostAsync(apiUrl, new StringContent(postDataJson, System.Text.Encoding.UTF8, "application/json"));
+                    HttpResponseMessage response = await client.PostAsync(apiUrl, new StringContent(postDataJson, Encoding.UTF8, "application/json"));
 
                     if (response.IsSuccessStatusCode)
                     {
+                        MessageBox.Show(postDataJson);
                         MessageBox.Show("Responses submitted successfully.");
                     }
                     else
@@ -140,31 +128,18 @@ namespace test
             foreach (var response in responses)
             {
                 formattedResponses.AppendLine($"Question ID: {response.QuestionID}");
-                formattedResponses.AppendLine($"Question: {response.Question}");
-                
-                foreach (var choiceId in response.SelectedChoiceIds)
-                {
-                    formattedResponses.AppendLine($"Selected Choices:{choiceId}");
-                    
-                }
+                formattedResponses.AppendLine($"Choice ID: {response.ChoiceID}");
                 formattedResponses.AppendLine();
             }
             return formattedResponses.ToString();
         }
 
 
-        
-
-
-
-
-
 
         public class Response
         {
             public string QuestionID { get; set; }
-            public string Question { get; set; }
-            public List<int> SelectedChoiceIds { get; set; }
+            public int ChoiceID { get; set; }
         }
 
         public class Choice

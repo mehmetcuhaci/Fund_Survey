@@ -8,17 +8,16 @@ namespace test
 {
     public partial class QuestionForm : Form
     {
+
+
         public List<Choice> Choices { get; set; }
         public List<RadioButton> ChoiceRadioButtons { get; private set; }
-
-       
+        public List<int> SelectedChoiceIdList { get; private set; } // Değişen isim
 
         public Choice SelectedChoice { get; private set; }
-
-        // Property to store the question
         public Question Question { get; set; }
-
         private Button nextQuestionButton;
+
 
 
         public QuestionForm()
@@ -26,7 +25,7 @@ namespace test
             InitializeComponent();
             ChoiceRadioButtons = new List<RadioButton>();
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            
+            SelectedChoiceIdList = new List<int>();
         }
 
         public string QuestionText
@@ -36,25 +35,11 @@ namespace test
         }
 
 
-        public List<Choice> SelectedChoices
+        public List<int> SelectedChoiceIds // Değişen isim
         {
             get
             {
-                List<Choice> selectedChoices = new List<Choice>();
-                foreach (var radioButton in ChoiceRadioButtons)
-                {
-                    if (radioButton.Checked)
-                    {
-                        selectedChoices.Add(new Choice
-                        {
-                            id = (int)radioButton.Tag,
-                            content = radioButton.Text,
-                            isSelected = true,
-                            ChoiceId = (int)radioButton.Tag // Add ChoiceId to the selected choice
-                        });
-                    }
-                }
-                return selectedChoices;
+                return SelectedChoiceIdList;
             }
         }
 
@@ -63,44 +48,22 @@ namespace test
             // Clear existing controls
             flowLayoutPanel1.Controls.Clear();
 
-            // int choiceIdCounter = 1; // Initialize the choice ID counter
-
             foreach (var choice in choices)
             {
                 RadioButton radioButton = new RadioButton();
-                //{
-                //    Text = choice.content,
-                //    Tag = choice.id,// choiceIdCounter, // Set the choice ID
-                //    AutoSize = true,
-                    
-                //};
 
                 radioButton.Text = choice.content;
                 radioButton.Tag = choice.id;
                 radioButton.AutoSize = true;
-
 
                 radioButton.CheckedChanged += (sender, e) =>
                 {
                     if (radioButton.Checked)
                     {
                         int choiceId = (int)radioButton.Tag;
-
-                        // Use the Question property to access the question object
-                        if (Question != null)
+                        if (!SelectedChoiceIdList.Contains(choiceId)) // Değişen isim
                         {
-                            // Assign the question and choice IDs
-                            choice.QuestionId = Question.id;
-                            choice.ChoiceId = choice.id; // Set the ChoiceId when a choice is selected
-                        }
-
-                        Choice selectedChoice = choices.Find(c => c.id == choiceId);
-                        if (selectedChoice != null)
-                        {
-                            if (!SelectedChoices.Any(c => c.id == choiceId))
-                            {
-                                SelectedChoices.Add(selectedChoice);
-                            }
+                            SelectedChoiceIdList.Add(choiceId); // Değişen isim
                         }
                     }
                 };
@@ -113,9 +76,6 @@ namespace test
                 };
 
                 flowLayoutPanel1.Controls.Add(radioButton);
-                flowLayoutPanel1.Controls.Add(choiceLabel); // Display the choice content
-
-                // choiceIdCounter++; // Increment the choice ID counter
             }
         }
 
