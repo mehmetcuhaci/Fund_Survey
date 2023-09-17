@@ -68,6 +68,7 @@ namespace test
                         MessageBox.Show("Formatted Responses:\n\n" + formattedResponses);
 
                         await PostResponsesToWebService(userResponses);
+
                     }
                     else
                     {
@@ -106,8 +107,20 @@ namespace test
 
                     if (response.IsSuccessStatusCode)
                     {
+                        string responseBody = await response.Content.ReadAsStringAsync();
                         MessageBox.Show(postDataJson); //test için göndermeden önce ekrana yazdırdı
-                        MessageBox.Show("Anket gönderildi."); 
+                        MessageBox.Show("Anket gönderildi.");
+                        var responseObject = JsonConvert.DeserializeObject<ResponseObject>(responseBody);
+
+                        StringBuilder displayText = new StringBuilder();
+                        displayText.AppendLine("Response from the server:");
+                        displayText.AppendLine($"Suggestion ID: {responseObject.data.suggestion.id}");
+                        displayText.AppendLine($"Suggestion Name: {responseObject.data.suggestion.name}");
+
+                        MessageBox.Show(displayText.ToString());
+
+
+
                     }
                     else
                     {
@@ -118,6 +131,7 @@ namespace test
                 {
                     MessageBox.Show($"Error: {ex.Message}");
                 }
+
             }
 
         }
@@ -134,6 +148,27 @@ namespace test
             return formattedResponses.ToString();
         }
 
+        
+
+
+        public class Result
+        {
+            public string content { get; set; }
+            public object detail { get; set; }
+
+        }
+
+        public class DataResponse
+        {
+            public List<Result> results { get; set; }
+        }
+
+        public class RootResponse
+        {
+            public DataResponse data { get; set; }
+            public bool success { get; set; }
+            public object error { get; set; }
+        }
 
 
         public class Response    /* Çekilen dataları sınıflara verildi gerekli olanlar sınıflardan liste halinde çekiliyor */
@@ -172,6 +207,8 @@ namespace test
             public bool active { get; set; }
             public string code { get; set; }
             public List<Question> questions { get; set; }
+            public Suggestion suggestion { get; set; }
+            public List<Answer> answers { get; set; }
         }
 
         public class Root
@@ -181,6 +218,49 @@ namespace test
             public object error { get; set; }
         }
 
+
+        public class TefasFundDetail
+        {
+            public string fundTitle { get; set; }
+            public long totalShareCount { get; set; }
+            public int totalInvestorCount { get; set; }
+            public double portfolioSize { get; set; }
+        }
+
+        public class Fund
+        {
+            public string tefasCode { get; set; }
+            public TefasFundDetail tefasFundDetail { get; set; }
+        }
+
+        public class SuggestionFund
+        {
+            public string name { get; set; }
+            public int weightPercentage { get; set; }
+            public string color { get; set; }
+            public List<Fund> funds { get; set; }
+        }
+
+        public class Suggestion
+        {
+            public string id { get; set; }
+            public string name { get; set; }
+            public List<SuggestionFund> suggestionFunds { get; set; }
+        }
+
+        public class Answer
+        {
+            public string content { get; set; }
+            public object detail { get; set; }
+            public List<Choice> choices { get; set; }
+        }
+
+        public class ResponseObject
+        {
+            public Data data { get; set; }
+            public bool success { get; set; }
+            public object error { get; set; }
+        }
     }
 
 }
