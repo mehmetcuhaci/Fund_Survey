@@ -113,9 +113,23 @@ namespace test
                         var responseObject = JsonConvert.DeserializeObject<ResponseObject>(responseBody);
 
                         StringBuilder displayText = new StringBuilder();
-                        displayText.AppendLine("Response from the server:");
-                        displayText.AppendLine($"Suggestion ID: {responseObject.data.suggestion.id}");
-                        displayText.AppendLine($"Suggestion Name: {responseObject.data.suggestion.name}");
+                        // displayText.AppendLine("Response from the server:");
+                        // displayText.AppendLine($"Suggestion ID: {responseObject.data.suggestion.id}");
+                        displayText.AppendLine($"Yatırımcı Tipiniz : {responseObject.data.suggestion.name}");
+                        displayText.AppendLine("Yatırım Yapabileceğiniz Fonlar :");
+
+                        foreach (var suggestionFund in responseObject.data.suggestion.suggestionFunds)
+                        {
+                            displayText.AppendLine($"Önerilen Fon: {suggestionFund.name}");
+
+                            foreach (var fund in suggestionFund.funds)
+                            {
+                                displayText.AppendLine($"Tefas Kodu: {fund.tefasCode}");
+                                displayText.AppendLine($"Tefas Fon Başlığı: {fund.tefasFundDetail.fundTitle}");
+                            }
+                        }
+
+
 
                         MessageBox.Show(displayText.ToString());
 
@@ -143,7 +157,7 @@ namespace test
             {
                 formattedResponses.AppendLine($"Question ID: {response.questionId}");  //test için ıdleri yazdırma
                 formattedResponses.AppendLine($"Choice ID: {response.choiceId}");
-                formattedResponses.AppendLine();
+                
             }
             return formattedResponses.ToString();
         }
