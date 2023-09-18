@@ -23,7 +23,7 @@ namespace test
         private async void button1_Click(object sender, EventArgs e)
         {
             string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey"; // anketi getirmek için kullanılan link
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002"; // kullanabilmek için api key
+            string apiKey = "*********************"; // kullanabilmek için api key
 
             using (HttpClient client = new HttpClient())  // web servisinden veri alabilmek için metod
             {
@@ -88,7 +88,7 @@ namespace test
         {
 
             string apiUrl = "https://dev.service.yancep.net/Survey/GetSurveyResult";
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";
+            string apiKey = "*********************";
 
             using (HttpClient client = new HttpClient())
             {
