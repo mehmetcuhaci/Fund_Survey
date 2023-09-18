@@ -66,6 +66,7 @@ namespace test
                             SelectedChoiceIdList.Add(choiceId); // ekle
                         }
                     }
+                   
                 };
 
                 
@@ -82,8 +83,15 @@ namespace test
 
         private void NextQuestionButton_Click(object sender, EventArgs e) //yeni soruya geç
         {
-            DialogResult = DialogResult.OK;
-            Close();
+            if (SelectedChoiceIds.Count > 0)
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            else
+            {
+                MessageBox.Show("Sorular boş bırakılamaz!");
+            }
         }
     }
 

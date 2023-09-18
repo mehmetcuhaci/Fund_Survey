@@ -65,7 +65,8 @@ namespace test
                         }
 
                         string formattedResponses = FormatResponsesForMessageBox(userResponses); //test için soruları ve seçenekleri ekrana bastırdım
-                        MessageBox.Show("Formatted Responses:\n\n" + formattedResponses);
+                       
+                        //  MessageBox.Show("Formatted Responses:\n\n" + formattedResponses);
 
                         await PostResponsesToWebService(userResponses);
 
@@ -108,7 +109,7 @@ namespace test
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show(postDataJson); //test için göndermeden önce ekrana yazdırdı
+                        // MessageBox.Show(postDataJson); //test için göndermeden önce ekrana yazdırdı
                         MessageBox.Show("Anket gönderildi.");
                         var responseObject = JsonConvert.DeserializeObject<ResponseObject>(responseBody);
 
