@@ -4,5 +4,11 @@ public class Class1
 {
 	public Class1()
 	{
-	}
+	   public int test1 { get; set; }
+}
+
+
+
+
+
 }

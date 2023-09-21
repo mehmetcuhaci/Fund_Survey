@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Serilog;
 
 namespace test
 {
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
+    using System.Security.Cryptography.X509Certificates;
 
     public partial class Form1 : Form
     {
@@ -22,9 +24,11 @@ namespace test
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            HoldingLog();
+
             string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey"; // anketi getirmek için kullanılan link
             string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002"; // kullanabilmek için api key
-
+             
             using (HttpClient client = new HttpClient())  // web servisinden veri alabilmek için metod
             {
                 client.DefaultRequestHeaders.Add("x-api-key", apiKey);  // api key girişi
@@ -79,9 +83,12 @@ namespace test
                 catch (Exception ex)                     /* Eğer bir sorun çıkarsa burada koduyla birlikte uyarısını vericek NotAllowed */
                 {
                     MessageBox.Show($"Error: {ex.Message}");
+                    Log.Warning("HATA VAR!");
+                    Log.Error($"Hata: {ex.Message}");
                 }
+                Log.CloseAndFlush();
             }
-
+            
         }
 
         private async Task PostResponsesToWebService(List<Response> userResponses)  // toplanan anket verisini göndermek için
@@ -90,12 +97,15 @@ namespace test
             string apiUrl = "https://dev.service.yancep.net/Survey/GetSurveyResult";
             string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";
 
+            
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("x-api-key", apiKey);
 
                 try
                 {
+                    HoldingLog();
+
                     var postData = new  //postlanıcak json için 
                     {
                         results = userResponses,
@@ -130,12 +140,7 @@ namespace test
                             }
                         }
 
-
-
-                        MessageBox.Show(displayText.ToString());
-
-
-
+                        MessageBox.Show(displayText.ToString());                       
                     }
                     else
                     {
@@ -145,10 +150,12 @@ namespace test
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error: {ex.Message}");
+                    Log.Warning("HATA VAR!");
+                    Log.Error($"Hata: {ex.Message}");
                 }
-
+                Log.CloseAndFlush();
             }
-
+                      
         }
 
         private string FormatResponsesForMessageBox(List<Response> responses)
@@ -163,6 +170,14 @@ namespace test
             return formattedResponses.ToString();
         }
 
+        public void HoldingLog()
+        {
+            Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.File("C:\\Users\\mehmetcu\\Desktop\\LogFiles\\Log.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+            
+        }
         
 
 

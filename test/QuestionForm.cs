@@ -9,7 +9,7 @@ namespace test
     public partial class QuestionForm : Form
     {
 
-
+    
         public List<Choice> Choices { get; set; }
         public List<RadioButton> ChoiceRadioButtons { get; private set; } 
         public List<int> SelectedChoiceIdList { get; private set; } // seçilen seçeneklerin listesi
@@ -26,6 +26,7 @@ namespace test
             ChoiceRadioButtons = new List<RadioButton>();
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown; // radiobuttonları dikey olarak sıralamak için
             SelectedChoiceIdList = new List<int>();
+            
         }
 
         public string QuestionText
