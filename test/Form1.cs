@@ -26,8 +26,8 @@ namespace test
         {
             HoldingLog();
 
-            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurvey"; // anketi getirmek için kullanılan link
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002"; // kullanabilmek için api key
+            string apiUrl = "*********************"; // anketi getirmek için kullanılan link
+            string apiKey = "***************"; // kullanabilmek için api key
              
             using (HttpClient client = new HttpClient())  // web servisinden veri alabilmek için metod
             {
@@ -94,8 +94,8 @@ namespace test
         private async Task PostResponsesToWebService(List<Response> userResponses)  // toplanan anket verisini göndermek için
         {
 
-            string apiUrl = "https://dev.service.yancep.net/Survey/GetSurveyResult";
-            string apiKey = "941bf440-4cc5-11ee-be56-0242ac120002";
+            string apiUrl = "*********************";
+            string apiKey = "*********************";
 
             
             using (HttpClient client = new HttpClient())
